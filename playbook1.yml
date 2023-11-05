@@ -1,0 +1,25 @@
+---
+- name: Handlers in Ansible
+  hosts: webserver
+  become: true
+  become_user: root
+  tasks:
+  - name: execute a command on hostserver
+    command: hostname -s
+    notify: Print a message for command Execution
+  - name: Install package httpd
+    package: name=httpd state=present
+  - name: Start httpd service
+    service: name=httpd state=started
+  - name: Deploy an HTML file on the host server
+    copy: src=index.html dest=/var/www/html
+    notify:
+     - Print Deployment status
+     - Restart httpd service
+  handlers:
+  - name: Print a message for command Execution
+    debug: msg="Command executed successfully"
+  - name: Print Deployment status
+    debug: msg="Deployment done successfully"
+  - name: Restart httpd service
+    service: name=httpd state=restarted
